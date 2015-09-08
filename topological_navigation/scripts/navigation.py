@@ -64,7 +64,7 @@ class TopologicalNavServer(object):
         self.stats_pub = rospy.Publisher('/topological_navigation/Statistics', NavStatistics)
         self.edge_pub = rospy.Publisher('/topological_navigation/Edge', CurrentEdge)
         self.route_pub = rospy.Publisher('/topological_navigation/Route', strands_navigation_msgs.msg.TopologicalRoute)
-        self.cur_edge = rospy.Publisher('/current_edge', String)
+        self.cur_edge = rospy.Publisher('/current_edge', String, latch=True)
         self.monit_nav_cli= False
 
         
@@ -109,6 +109,9 @@ class TopologicalNavServer(object):
         config = self.rcnfclient.get_configuration()
         self.dyt = config['yaw_goal_tolerance']
 
+
+        current_edge = 'none'
+        self.cur_edge.publish(current_edge)
 
         rospy.loginfo("All Done ...")
         rospy.spin()
@@ -359,7 +362,8 @@ class TopologicalNavServer(object):
 
             rospy.loginfo("From %s do (%s) to %s" %(route.source[rindex], a, cedg.node))
 
-            current_edge = '%s--%s' %(cedg.edge_id, self.topol_map)
+            #current_edge = '%s__%s' %(cedg.edge_id, self.topol_map)
+            current_edge = '%s' %(cedg.edge_id)
             rospy.loginfo("Current edge: %s" %current_edge)
             self.cur_edge.publish(current_edge)
 
