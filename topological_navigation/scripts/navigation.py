@@ -16,6 +16,8 @@ from actionlib_msgs.msg import *
 from move_base_msgs.msg import *
 from std_msgs.msg import String
 
+
+import message_store_map_switcher.srv #/SwitchMap
 from strands_navigation_msgs.msg import TopologicalMap
 from mongodb_store.message_store import MessageStoreProxy
 
@@ -48,6 +50,7 @@ class TopologicalNavServer(object):
         self.preempted = False
         self.stat = None
         self.no_orientation = False
+        self.nav_map_name = 'none'
         self._target = "None"
         self.current_action = 'none'
         self.next_action = 'none'
@@ -100,6 +103,7 @@ class TopologicalNavServer(object):
         rospy.loginfo("Subscribing to Localisation Topics")
         rospy.Subscriber('/closest_node', String, self.closestNodeCallback)
         rospy.Subscriber('/current_node', String, self.currentNodeCallback)
+        rospy.Subscriber('/current_nav_map_name', String, self.currentMapNameCallback)
         rospy.loginfo(" ...done")
 
         
@@ -185,6 +189,8 @@ class TopologicalNavServer(object):
         if not self.monit_nav_cli :
             rospy.loginfo('Monitored Navigation client has not started!!!')
 
+    def currentMapNameCallback(self, msg):
+        self.nav_map_name=msg.data
 
     """
      Current Node CallBack
@@ -307,8 +313,10 @@ class TopologicalNavServer(object):
         route_len = len(route.edge_id)
         
         o_node = get_node(self.lnodes, Orig)
-        a = get_edge_from_id(self.lnodes, route.source[0], route.edge_id[0]).action#route[rindex]._get_action(route[rindex+1].name)
+        cedg = get_edge_from_id(self.lnodes, route.source[0], route.edge_id[0])#.action#route[rindex]._get_action(route[rindex+1].name)
+        a = cedg.action
         rospy.loginfo("first action %s" %a)
+
 
         # If the robot is not on a node or the first action is not move base type
         # navigate to closest node waypoint (only when first action is not move base)
@@ -349,7 +357,6 @@ class TopologicalNavServer(object):
         while rindex < (len(route.edge_id)) and not self.cancelled and nav_ok :
             #current action
             cedg = get_edge_from_id(self.lnodes, route.source[rindex], route.edge_id[rindex])
-
             a = cedg.action
             #next action
             if rindex < (route_len-1) :
@@ -366,6 +373,28 @@ class TopologicalNavServer(object):
             current_edge = '%s' %(cedg.edge_id)
             rospy.loginfo("Current edge: %s" %current_edge)
             self.cur_edge.publish(current_edge)
+
+            if self.nav_map_name != cedg.map_2d and cedg.map_2d != 'none':
+                print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+                print "NOT THE RIGHT NAVIGATION MAP"
+                print cedg.map_2d
+                print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+                rospy.sleep(2.0)
+                try:
+                    rospy.wait_for_service('/switch_map', timeout=3)
+                    try:
+                        switchmapserv = rospy.ServiceProxy('/switch_map', message_store_map_switcher.srv.SwitchMap)
+                        resp1 = switchmapserv(cedg.map_2d)
+                        print resp1
+                        if resp1.result:
+                            print "MAP SWITCHED SUCCESSFULLY"
+                        else:
+                            rospy.logwarn('switch map service failed will use previous map')
+                    except rospy.ServiceException, e:
+                        print "Service call failed: %s"%e
+                except Exception, e:
+                    rospy.logwarn('switch map service not available')               
+                rospy.sleep(1.0)
 
                       
             self._feedback.route = '%s to %s using %s' %(route.source[rindex], cedg.node, a)
@@ -424,6 +453,7 @@ class TopologicalNavServer(object):
 
             self.publish_stats()
 
+            rospy.sleep(0.1)            
             
             current_edge = 'none'
             self.cur_edge.publish(current_edge)            

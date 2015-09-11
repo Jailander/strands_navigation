@@ -9,11 +9,13 @@ import StringIO
 from optparse import OptionParser
 from nav_msgs.msg import OccupancyGrid
 from message_store_map_switcher.srv import SwitchMap
+from std_msgs.msg import String
 
 class MessageStoreMapServer:
     def __init__(self):
         self.msg_store = MessageStoreProxy()
         self.map_publisher = rospy.Publisher('/map', OccupancyGrid, latch=True)
+        self.map_name_publisher = rospy.Publisher('/current_nav_map_name', String, latch=True)
         self.publish_map_serv = rospy.Service('/switch_map', SwitchMap, self.serve_map_srv)
 
     def serve_map_srv(self, req):
@@ -27,6 +29,7 @@ class MessageStoreMapServer:
                 return False
             else:
                 self.map_publisher.publish(query_result[0])
+                self.map_name_publisher.publish(name)
                 return True
         except rospy.ServiceException, e:
             print "Service call failed: %s"%e
