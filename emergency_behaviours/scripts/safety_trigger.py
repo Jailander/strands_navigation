@@ -7,6 +7,8 @@ from threading import Timer
 
 from std_msgs.msg import String
 import std_srvs.srv
+import sensor_msgs.msg
+import strands_webserver.msg
 import strands_navigation_msgs.srv
 from strands_navigation_msgs.msg import TopologicalMap
 import strands_emails.msg
@@ -35,6 +37,10 @@ class SafetyServer(object):
         self.notificate_to = rospy.get_param("/admin_email",'henry.strands@hanheide.net')
 
 
+        self.tlgrm_not_pub = rospy.Publisher('/notification', String, queue_size=1)
+        self.tlgrm_img_pub = rospy.Publisher('/notification_image', sensor_msgs.msg.Image, queue_size=1)
+        self.web_not_pub =rospy.Publisher('/strands_webserver/modal_dialog', strands_webserver.msg.ModalDlg, queue_size=1)
+        
         #Waiting for Topological Map        
         self._map_received=False
         rospy.Subscriber('/topological_map', TopologicalMap, self.MapCallback)      
@@ -126,6 +132,8 @@ class SafetyServer(object):
 
     def reset_safety_stop_cb(self, req):
         self.safety_stop = False
+        text='The safety stop has been released'
+        self.tlgrm_not_pub.publish(text)
         return
 
 
@@ -265,6 +273,7 @@ class SafetyServer(object):
         client.wait_for_server()
         goal = strands_emails.msg.SendEmailGoal()
 
+
         if self.service_called == 'Safety Stop':
             ps='I recommend calling an expert to resume Normal operation a */reset_safety_stop* service call is needed'
         if self.service_called == 'Go to Safety Point':
@@ -276,10 +285,23 @@ class SafetyServer(object):
         
         client.send_goal(goal)
         self.info = ''
-        #print "sending email"
         
-        # Prints out the result of executing the action
-        #return client.get_result()  # A FibonacciResult
+        
+        self.tlgrm_not_pub.publish(goal.text)
+        # Sending Telegram notifications
+        try:
+            triger_image=rospy.wait_for_message('/interaction_camera/throttled/image',sensor_msgs.msg.Image, timeout=10)
+            self.tlgrm_img_pub.publish(triger_image)
+        except:
+            rospy.logerr("Interactive camera image not available")
+        
+        webnot=strands_webserver.msg.ModalDlg()
+        webnot.title = 'Zur Zeit ausser Betrieb'
+        webnot.content = 'Der Roboter ist zur Zeit ausser Betrieb. Falls er im Weg steht, schieben Sie ihn einfach an einen Ort, wo er Sie nicht behindert. Bitte melden Sie die unserem Mitarbeiter an der Rezeption. Vielen Dank!'
+        webnot.show=True
+        self.web_not_pub.publish(webnot)
+        #print "sending email"
+                
 
     def cancel_all_goals(self):
         self.info= self.info + '\t - Cancel Goals\n'
