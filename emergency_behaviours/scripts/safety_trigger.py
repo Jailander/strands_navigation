@@ -134,6 +134,9 @@ class SafetyServer(object):
         self.safety_stop = False
         text='The safety stop has been released'
         self.tlgrm_not_pub.publish(text)
+        webnot=strands_webserver.msg.ModalDlg()
+        webnot.show=False
+        self.web_not_pub.publish(webnot)
         return
 
 
