@@ -8,6 +8,7 @@ from threading import Timer
 from std_msgs.msg import String
 import std_srvs.srv
 import sensor_msgs.msg
+from mongodb_store.message_store import MessageStoreProxy
 import strands_webserver.msg
 import strands_navigation_msgs.srv
 from strands_navigation_msgs.msg import TopologicalMap
@@ -303,6 +304,13 @@ class SafetyServer(object):
         webnot.content = 'Der Roboter ist zur Zeit ausser Betrieb. Falls er im Weg steht, schieben Sie ihn einfach an einen Ort, wo er Sie nicht behindert. Bitte melden Sie die unserem Mitarbeiter an der Rezeption. Vielen Dank!'
         webnot.show=True
         self.web_not_pub.publish(webnot)
+        
+        meta = {}
+        meta["type"] = "Emergency Behaviour Trigger"
+        meta["text"] = goal.text
+        
+        msg_store = MessageStoreProxy(collection='safety_stops')
+        msg_store.insert(triger_image,meta)
         #print "sending email"
                 
 
