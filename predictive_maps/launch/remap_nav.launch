@@ -1,0 +1,67 @@
+<launch>
+    <arg name="env" default="uol_ww"/> 
+    <arg name="with_chest_xtion" default="false"/>
+    
+    <arg name="global_frame_id" default="slam" />
+    <!-- gmapping parameters -->
+    <arg name="delta" default="0.05"/>
+
+    <arg name="minimumScore" default="550.0"/>
+    <arg name="maxUrange" default="20.0"/>
+    <arg name="srr" default="0.05"/>
+    <arg name="srt" default="0.05"/>
+    <arg name="str" default="0.05"/>
+    <arg name="stt" default="0.05"/>
+    
+    <arg name="odom_frame" default="$(arg global_frame_id)"/>
+    <arg name="map_frame" default="map" />
+
+    <arg name="xmin" default="-100"/>
+    <arg name="ymin" default="-100"/>
+    <arg name="xmax" default="100"/>
+    <arg name="ymax" default="100"/>
+    
+    <!--<arg name="map_folder" default="/storage/predicted_maps/" />-->
+    
+    
+    <!-- amcl parameters -->
+    <arg name="amcl_frame_id" default="amcl"/>
+    
+    <arg name="machine" default="localhost" />
+    <arg name="user" default="" />
+
+    <!-- NOW when launching in a remote mode it will need the ROS_ENV_LOADER set if not it will leave it empty -->
+    <machine name="$(arg machine)" address="$(arg machine)" env-loader="$(optenv ROS_ENV_LOADER )" user="$(arg user)" default="true" />
+
+    
+
+    <!-- 2D Navigation -->
+    <include file="$(find predictive_maps)/launch/remap_movebase.launch">
+	<arg name="map" value="$(find strands_morse)/uol/maps/$(arg env).yaml"/>
+	<arg name="with_chest_xtion" value="$(arg with_chest_xtion)"/>
+	<!--<arg name="amcl_frame_id" value="$(arg amcl_frame_id)"/>-->
+    </include>
+    
+    <include file="$(find predictive_maps)/launch/remapping.launch">
+      <arg name="global_frame_id" value="$(arg global_frame_id)" />
+
+      <!-- gmapping parameters -->
+      <arg name="delta"	value="$(arg delta)"/>
+      <arg name="minimumScore"	value="$(arg minimumScore)"/>
+      <arg name="maxUrange"	value="$(arg maxUrange)"/>
+      <arg name="srr"	value="$(arg srr)"/>
+      <arg name="srt"	value="$(arg srt)"/>
+      <arg name="str"	value="$(arg str)"/>
+      <arg name="stt"	value="$(arg stt)"/>
+    
+      <arg name="odom_frame" value="$(arg odom_frame)"/>
+      <arg name="map_frame" value="$(arg map_frame)" />
+
+      <arg name="xmin" value="$(arg xmin)"/>
+      <arg name="ymin" value="$(arg ymin)"/>
+      <arg name="xmax" value="$(arg xmax)"/>
+      <arg name="ymax" value="$(arg ymax)"/>     
+    </include>
+  
+   
+</launch>
