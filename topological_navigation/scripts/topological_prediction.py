@@ -575,8 +575,10 @@ class TopologicalNavPred(object):
             prob = list(ps.probabilities)
     
             for j in range(len(mods)):
-                alpha=numpy.exp(-samples[j]/50)
+                #ppi=prob[j]
+                alpha=numpy.exp(-samples[j]/50)               
                 prob[j]=(prob[j]*(1-alpha))+(0.5*alpha)
+                #print ppi, alpha, samples[j], prob[j]
                 if prob[j] < 0.05 :
                     prob[j] = 0.05
                 i=get_model(mods[j], self.models)
