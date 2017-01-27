@@ -57,6 +57,7 @@ class TopologicalNavPred(object):
         action_name = name+'/build_temporal_model'
         
         self.ignore_map_name = rospy.get_param("~ignore_map_name", False)
+        self.add_operation = rospy.get_param("~add_operation", "add")
         
         if self.ignore_map_name:
             rospy.logwarn("Ignoring map name in model creation. All stats will be considered")
@@ -179,7 +180,8 @@ class TopologicalNavPred(object):
             #print [status], time, [speed]
     
             fremgoal = fremenserver.msg.FremenGoal()
-            fremgoal.operation = 'add'
+            #fremgoal.operation = 'add'
+            fremgoal.operation = self.add_operation
             fremgoal.id = model_name
             fremgoal.times = [epoch]
             fremgoal.states = [status]
