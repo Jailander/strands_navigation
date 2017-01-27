@@ -25,7 +25,7 @@ sleep 1
 for f in $FILES
 do
   echo "Processing $f file..."
-  rosbag play "$f" --clock -r 10 -q
+  rosbag play "$f" --clock -r 100 -q
 done
 
 rosnode kill /extract_info
