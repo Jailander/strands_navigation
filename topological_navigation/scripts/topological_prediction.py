@@ -315,8 +315,9 @@ class TopologicalNavPred(object):
 
             #print query
             #print query_meta
+            sort_query = [('_meta.epoch','1')]
             
-            available = msg_store.query(NavStatistics._type, query, query_meta)
+            available = msg_store.query(NavStatistics._type, query, query_meta, False, sort_query)
             # print len(available)
             edge_mod={}
             edge_mod["model_id"]= i["model_id"]#self.lnodes.name+'__'+i["edge_id"]
