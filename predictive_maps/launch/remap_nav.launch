@@ -47,7 +47,7 @@
 
     <!-- 2D Navigation -->
     <include file="$(find predictive_maps)/launch/remap_movebase.launch">
-	<arg name="map" value="$(find strands_morse)/uol/maps/$(arg env).yaml"/>
+	<arg name="map" value="$(arg map)"/>
 	<arg name="with_chest_xtion" value="$(arg with_chest_xtion)"/>
 	<arg name="chest_xtion_machine" value="$(arg chest_xtion_machine)"/>
 	<arg name="chest_xtion_user" value="$(arg chest_xtion_user)"/>
