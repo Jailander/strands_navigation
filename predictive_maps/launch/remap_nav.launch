@@ -1,10 +1,20 @@
 <launch>
-    <arg name="env" default="uol_ww"/> 
+  <!-- <arg name="env" default="uol_ww"/> -->
     <arg name="with_chest_xtion" default="false"/>
+    <arg name="chest_xtion_machine" default="localhost"/>
+    <arg name="chest_xtion_user" default=""/>
     
     <arg name="global_frame_id" default="slam" />
+    <arg name="map" default="$(find strands_morse)/uol/maps/uol_ww.yaml"/> 
+    
+    <arg name="topo_nav_machine" default="right-cortex"/>
+    <arg name="topo_nav_user" default="strands"/>
+    <arg name="mon_nav_config_file" default="$(find strands_recovery_behaviours)/config/monitored_nav_config.yaml"/>
+    <arg name="wait_reset_bumper_duration" default="10.0"/>
+
+    
     <!-- gmapping parameters -->
-    <arg name="delta" default="0.05"/>
+<!--    <arg name="delta" default="0.05"/>
 
     <arg name="minimumScore" default="550.0"/>
     <arg name="maxUrange" default="20.0"/>
@@ -19,7 +29,7 @@
     <arg name="xmin" default="-100"/>
     <arg name="ymin" default="-100"/>
     <arg name="xmax" default="100"/>
-    <arg name="ymax" default="100"/>
+    <arg name="ymax" default="100"/> -->
     
     <!--<arg name="map_folder" default="/storage/predicted_maps/" />-->
     
@@ -39,14 +49,16 @@
     <include file="$(find predictive_maps)/launch/remap_movebase.launch">
 	<arg name="map" value="$(find strands_morse)/uol/maps/$(arg env).yaml"/>
 	<arg name="with_chest_xtion" value="$(arg with_chest_xtion)"/>
+	<arg name="chest_xtion_machine" value="$(arg chest_xtion_machine)"/>
+	<arg name="chest_xtion_user" value="$(arg chest_xtion_user)"/>
 	<!--<arg name="amcl_frame_id" value="$(arg amcl_frame_id)"/>-->
     </include>
     
-    <include file="$(find predictive_maps)/launch/remapping.launch">
-      <arg name="global_frame_id" value="$(arg global_frame_id)" />
+    <include file="$(find predictive_maps)/launch/remapping.launch"/>
+<!--      <arg name="global_frame_id" value="$(arg global_frame_id)" />  -->
 
       <!-- gmapping parameters -->
-      <arg name="delta"	value="$(arg delta)"/>
+<!--      <arg name="delta"	value="$(arg delta)"/>
       <arg name="minimumScore"	value="$(arg minimumScore)"/>
       <arg name="maxUrange"	value="$(arg maxUrange)"/>
       <arg name="srr"	value="$(arg srr)"/>
@@ -61,7 +73,19 @@
       <arg name="ymin" value="$(arg ymin)"/>
       <arg name="xmax" value="$(arg xmax)"/>
       <arg name="ymax" value="$(arg ymax)"/>     
+    </include> -->
+    
+      <!--- Topological Navigation (includes monitored_navigation) -->
+    <include file="$(find topological_navigation)/launch/topological_navigation.launch">
+      <arg name="machine"  value="$(arg topo_nav_machine)"/>
+      <arg name="user"  value="$(arg topo_nav_user)"/>
+      <arg name="map" value="$(arg topological_map)"/>
+      <arg name="mon_nav_config_file" value="$(arg mon_nav_config_file)"/>
+      <arg name="wait_reset_bumper_duration" value="$(arg wait_reset_bumper_duration)"/>
     </include>
-  
-   
+    
+    <node pkg="predictive_maps" type="fake_frames_publisher.py" name="fake_frames_publisher" respawn="true"/>
+    
+    <node pkg="predictive_maps" type="map_mux.py" name="map_mux" respawn="true"/>
+      
 </launch>

@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 
-import os
-import yaml
-from datetime import datetime
+#import os
+#import yaml
+#from datetime import datetime
 
-import roslib
+#import roslib
 import rospy
 
 import tf
@@ -24,9 +24,9 @@ class map_mux(object):
         self.slam_map_name=rospy.get_param('~slam_map','/gmap')
         self.out_map_name=rospy.get_param('~out_map','/map')
         self.map_frame=rospy.get_param('~map_frame','map')
-        self.amcl_frame=rospy.get_param('~amcl_frame','odom')
+        self.amcl_frame=rospy.get_param('~amcl_frame','fake_odom')
         self.slam_frame=rospy.get_param('~slam_frame','slam')
-        self.out_frame=rospy.get_param('~out_frame','mux')
+        self.out_frame=rospy.get_param('~out_frame','odom')
         self.listener = tf.TransformListener()
         self.br = tf.TransformBroadcaster()
         
