@@ -13,7 +13,10 @@
     <arg name="wait_reset_bumper_duration" default="10.0"/>
 
     <arg name="with_mux" default="false" />
-    
+
+    <!-- WARNING: This EBC will be powerded on and off during docking! -->
+    <arg name="lightEBC" default=""/>
+    <arg name="positionUpdate" default="true"/>    
     <!-- gmapping parameters -->
 <!--    <arg name="delta" default="0.05"/>
 
