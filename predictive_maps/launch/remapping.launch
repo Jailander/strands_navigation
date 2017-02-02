@@ -53,7 +53,7 @@
 
     </node>
     
-    <node pkg="aaf_bringup" type="save_predictive_maps.py" name="save_predictive_maps" respawn="true">
+    <node pkg="predictive_maps" type="save_predictive_maps.py" name="save_predictive_maps" respawn="true">
       <param name="map_folder" value="$(arg map_folder)"/>
     </node>
 </launch>
