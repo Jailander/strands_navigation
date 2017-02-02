@@ -12,7 +12,7 @@
     <arg name="stt" default="0.05"/>
     
     <arg name="odom_frame" default="slam"/>
-    <arg name="map_frame" default="map" />
+    <arg name="map_frame" default="fake_odom" />
 
     <!-- <arg name="xmin" default="-100"/>
     <arg name="ymin" default="-100"/>
