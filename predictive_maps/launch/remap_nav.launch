@@ -7,7 +7,7 @@
     <arg name="global_frame_id" default="slam" />
     <arg name="map" default="$(find strands_morse)/uol/maps/uol_ww.yaml"/> 
     
-    <arg name="with_human_aware" default="true"/>
+    
     <arg name="topo_nav_machine" default="right-cortex"/>
     <arg name="topo_nav_user" default="strands"/>
     <arg name="mon_nav_config_file" default="$(find strands_recovery_behaviours)/config/monitored_nav_config.yaml"/>
@@ -19,9 +19,17 @@
     <!-- WARNING: This EBC will be powerded on and off during docking! -->
     <arg name="lightEBC" default=""/>
     <arg name="positionUpdate" default="true"/>    
-    <!-- gmapping parameters -->
-<!--    <arg name="delta" default="0.05"/>
 
+   
+    <arg name="with_human_aware" default="true"/>
+    <arg name="timeout" default="0.0" />
+    <arg name="max_dist" default="4.0" />
+    <arg name="min_dist" default="1.0" />
+    <arg name="detection_angle" default="45.0" />
+    <arg name="gaze_type" default="1" />
+    
+        <!-- gmapping parameters -->
+<!--    <arg name="delta" default="0.05"/>
     <arg name="minimumScore" default="550.0"/>
     <arg name="maxUrange" default="20.0"/>
     <arg name="srr" default="0.05"/>
