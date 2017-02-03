@@ -66,7 +66,8 @@ class map_mux(object):
             if self.normal_map:
                 (trans,rot) = self.listener.lookupTransform(self.map_frame, self.amcl_frame, rospy.Time(0))
             else:
-                (trans,rot) = self.listener.lookupTransform(self.map_frame, self.slam_frame, rospy.Time(0))
+#                (trans,rot) = self.listener.lookupTransform(self.map_frame, self.slam_frame, rospy.Time(0))
+                (trans,rot) = self.listener.lookupTransform(self.amcl_frame, self.slam_frame, rospy.Time(0))            
             self.br.sendTransform(trans,rot,rospy.Time.now(),self.out_frame,self.map_frame)
             #print trans,rot
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
