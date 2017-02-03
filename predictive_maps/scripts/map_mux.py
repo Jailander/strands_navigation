@@ -28,6 +28,7 @@ class map_mux(object):
         self.amcl_frame=rospy.get_param('~amcl_frame','fake_odom')
         self.slam_frame=rospy.get_param('~slam_frame','slam')
         self.out_frame=rospy.get_param('~out_frame','odom')
+        
         self.listener = tf.TransformListener()
         self.br = tf.TransformBroadcaster()
         
@@ -66,8 +67,7 @@ class map_mux(object):
             if self.normal_map:
                 (trans,rot) = self.listener.lookupTransform(self.map_frame, self.amcl_frame, rospy.Time(0))
             else:
-#                (trans,rot) = self.listener.lookupTransform(self.map_frame, self.slam_frame, rospy.Time(0))
-                (trans,rot) = self.listener.lookupTransform(self.amcl_frame, self.slam_frame, rospy.Time(0))            
+                (trans,rot) = self.listener.lookupTransform(self.map_frame, self.slam_frame, rospy.Time(0))
             self.br.sendTransform(trans,rot,rospy.Time.now(),self.out_frame,self.map_frame)
             #print trans,rot
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
@@ -93,8 +93,11 @@ class map_mux(object):
     def switch_navigation_map(self):
         if self.normal_map:
             self.map_index=2
-            #self.map_pub.publish(self.slam_map)
-            self.map_pub.publish(self.base_map)
+            self.map_switch=rospy.get_param('/map_switch',False)
+            if self.map_switch:
+                self.map_pub.publish(self.slam_map)
+            else:
+                self.map_pub.publish(self.base_map)
             self.normal_map=False
             message='switched to slam map'
         else:
