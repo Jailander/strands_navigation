@@ -11,6 +11,7 @@ import rospy
 import tf
 
 from std_srvs.srv import Trigger
+from std_srvs.srv import Empty
 #from std_msgs.msg import String
 #from std_msgs.msg import Int64
 from nav_msgs.msg import OccupancyGrid
@@ -79,7 +80,14 @@ class map_mux(object):
 
 
     def switch_navigation_map_cb(self, req):
-        return self.switch_navigation_map()
+        result, message = self.switch_navigation_map()
+        try:
+            rospy.wait_for_service('/move_base/clear_costmaps')
+            clear_costmap = rospy.ServiceProxy('/move_base/clear_costmaps', Empty)
+            clear_costmap()
+        except rospy.ServiceException, e:
+            rospy.logwarn("Service call failed: %s", e)
+        return result, message
         
     def switch_navigation_map(self):
         if self.normal_map:

@@ -106,6 +106,12 @@
     <!-- Backtrack server -->
     <include file="$(find backtrack_behaviour)/launch/backtrack.launch"/>
     
+      <!-- Ramp Climbing -->
+    <include file="$(find ramp_climb)/launch/rampclimbing_mux.launch">
+	<arg name="machine"  value="$(arg machine)"/>
+	<arg name="user"  value="$(arg user)"/>
+    </include>
+    
       <!--- Topological Navigation (includes monitored_navigation) -->
     <include file="$(find topological_navigation)/launch/topological_navigation.launch">
       <arg name="machine"  value="$(arg topo_nav_machine)"/>
