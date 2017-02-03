@@ -84,7 +84,8 @@ class map_mux(object):
     def switch_navigation_map(self):
         if self.normal_map:
             self.map_index=2
-            self.map_pub.publish(self.slam_map)
+            #self.map_pub.publish(self.slam_map)
+            self.map_pub.publish(self.base_map)
             self.normal_map=False
             message='switched to slam map'
         else:
