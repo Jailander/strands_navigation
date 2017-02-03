@@ -95,13 +95,13 @@
 
     
       <!--- Topological Navigation (includes monitored_navigation) -->
-    <include file="$(find topological_navigation)/launch/topological_navigation.launch">
+    <!--- <include file="$(find topological_navigation)/launch/topological_navigation.launch">
       <arg name="machine"  value="$(arg topo_nav_machine)"/>
       <arg name="user"  value="$(arg topo_nav_user)"/>
       <arg name="map" value="$(arg topological_map)"/>
       <arg name="mon_nav_config_file" value="$(arg mon_nav_config_file)"/>
       <arg name="wait_reset_bumper_duration" value="$(arg wait_reset_bumper_duration)"/>
-    </include>
+    </include>-->
     
     <node pkg="predictive_maps" type="fake_frames_publisher.py" name="fake_frames_publisher" respawn="true"/>
     

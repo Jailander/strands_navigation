@@ -13,6 +13,8 @@
     
     <arg name="odom_frame" default="slam"/>
     <arg name="map_frame" default="fake_odom" />
+    <arg name="base_frame" default="fake_base_link" />
+    
 
     <!-- <arg name="xmin" default="-100"/>
     <arg name="ymin" default="-100"/>
@@ -49,7 +51,9 @@
 	
 	<param name="odom_frame" value="$(arg odom_frame)"/>
 	<param name="map_frame" value="$(arg map_frame)" />
+	<param name="base_frame" value="$(arg base_frame)" />
 	<remap from="/map" to="/gmap"/>
+	<remap from="/scan" to="/fake_scan"/>
 
     </node>
     
