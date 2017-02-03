@@ -103,6 +103,8 @@
       <arg name="positionUpdate"  value="$(arg positionUpdate)"/>
     </include>
 
+    <!-- Backtrack server -->
+    <include file="$(find backtrack_behaviour)/launch/backtrack.launch"/>
     
       <!--- Topological Navigation (includes monitored_navigation) -->
     <include file="$(find topological_navigation)/launch/topological_navigation.launch">
